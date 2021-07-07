@@ -102,7 +102,15 @@ def Execute():
                 if( not procFile):
                     pass
                 else:
-                    files = {'upload_file': open(procFile, 'rb'), 'Name': os.path.basename(procFile)}
+                    fileName = "{}_{}_{}".format(
+                        item[16],
+                        date.strftime("%Y%m%d_%H%M%S"),
+                        os.path.basename(procFile)
+                    )
+                    files = {
+                        'upload_file': open(procFile, 'rb'), 
+                        'Name': fileName
+                    }
                     requests.post('http://192.168.0.180:5000/uploadedFile', files=files)
 
             rc = True

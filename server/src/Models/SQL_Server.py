@@ -1,13 +1,21 @@
 import pyodbc
+from .config import return_config
 
 class SQL_Server:
     def __init__(self):
+        config = return_config()
+        print(config)
         self.cnxn = pyodbc.connect(
             'Driver={SQL Server};'
-            'Server=192.168.0.101;'
-            'Database=CDA;'
-            'UID=sa;'
-            'PWD=$2@cda101;'
+            'Server=%s;'
+            'Database=%s;'
+            'UID=%s;'
+            'PWD=%s;' % (
+                config['Server'], 
+                config['Database'], 
+                config['DBUser'], 
+                config['DBPassword']
+            )
         )
         self.cursor = self.cnxn.cursor()
     

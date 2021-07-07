@@ -15,13 +15,13 @@ class PrinterDataSQL():
             P.TotalScanner AS "SCANNER",
             P.TotalOthers AS "OTHERS",
             P.Total AS "TOTAL",
-            S.SectionDesc AS "SECTION"
+            P.PrinterSectionID AS "SECTION"
         FROM PRINTERS P
-        JOIN SECTION S ON P.PrinterSectionID = S.SectionID
+        
         WHERE P.PrinterDesc='{printer}' AND P.PrinterIP='{ip}'
 
         """
-        
+        print(query)
         return self.db.get_data(query)
 
     def updateCounter(self, **kwargs):

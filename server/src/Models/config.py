@@ -14,4 +14,6 @@ def return_config():
         json_data = json.load(f)
     f.close()
 
+    if(json_data['Network_Folder']) and (json_data['Credentials']['User'] == "") or (json_data['Credentials']['Password'] == ""):
+        raise Exception('Opção de pasta em Rede esta habilitada, mas as credenciais para acesso não foram informadas!')
     return json_data

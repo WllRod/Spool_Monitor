@@ -19,8 +19,8 @@ try:
     configs = return_config()
 
     if(configs['Network_Folder']):
-        user = configs['then']['Credentials']['User']
-        password = configs['then']['Credentials']['Password']
+        user = configs['Credentials']['User']
+        password = configs['Credentials']['Password']
         subprocess.Popen("net use {} /User:{} {}".format(
             configs['UPLOAD_FOLDER'],
             user,

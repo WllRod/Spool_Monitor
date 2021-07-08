@@ -41,7 +41,7 @@ def insert_product():
         user = Users.InsertUser()
         printer = InsertPrinter()
         verifyUser = user.insert_user(content['User'])[0].ID
-        printer.insert_printer(content['ID'], content['Printer'])
+        printer.insert_printer(content['IP'], content['Printer'])
         printer = PrinterData(verifyUser, app.config['UPLOAD_FOLDER'])
         printer.get_db_data(content['Printer'], content)
        

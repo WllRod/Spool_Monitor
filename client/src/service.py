@@ -1,18 +1,11 @@
+import getpass
 import os
 from os.path import expanduser
 import winreg
 from datetime import datetime
 import ctypes
 
-path    = r'SOFTWARE\Puxada_XML'
 
-if(os.path.exists(path)):
-    pass
-else:
-    winreg.CreateKey(winreg.HKEY_LOCAL_MACHINE, path)
-    registry_key    = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, path, 0, winreg.KEY_WRITE)
-    winreg.SetValueEx(registry_key, "XML's", 0, winreg.REG_SZ, os.environ.get('LOCAL_PATH'))
-    winreg.CloseKey(registry_key)
 import servicemanager
 import socket
 import sys
@@ -23,18 +16,13 @@ import pyodbc
 import json
 from collections import namedtuple
 from shutil import copy
-import winshell
-import time
-import schedule
-import logging.handlers
-import subprocess
-import shutil
 from components import Execute
+from GUI import start_gui
 
 class TestService(win32serviceutil.ServiceFramework):
-    _svc_name_ = "TESTE"
-    _svc_display_name_ = "TESTE"
-    _svc_description_ = "TESTE"
+    _svc_name_ = "SpoolMonitorClient"
+    _svc_display_name_ = "Spool Monitor"
+    _svc_description_ = "TESTE4"
 
     def __init__(self, args):
         win32serviceutil.ServiceFramework.__init__(self, args)
@@ -43,7 +31,9 @@ class TestService(win32serviceutil.ServiceFramework):
 
     def SvcStop(self):
 
-        
+        #teste = start_gui()
+        #print(teste)
+        #ctypes.windll.user32.MessageBoxA(0, "Your text?", "Your title", 0x10)
         self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
         
         win32event.SetEvent(self.hWaitStop)
@@ -64,8 +54,13 @@ class TestService(win32serviceutil.ServiceFramework):
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
+        #print('TESTE')
+        #start_gui()
         servicemanager.Initialize()
         servicemanager.PrepareToHostSingle(TestService)
         servicemanager.StartServiceCtrlDispatcher()
     else:
+        arq = open('C:\\Windows\\User.txt', 'w')
+        arq.write(str(getpass.getuser()))
+        arq.close()
         win32serviceutil.HandleCommandLine(TestService)

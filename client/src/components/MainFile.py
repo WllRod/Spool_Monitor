@@ -11,8 +11,10 @@ import shutil
 import requests
 import time
 import re
-from returnIP import return_ip
+from components.returnIP import return_ip
+#from returnIP import return_ip
 import json
+
 
 def proc_file(**kwargs):
     
@@ -31,10 +33,55 @@ def proc_file(**kwargs):
     return False
 
 
+def getSSID():
+    arq = open('C:\\Windows\\User.txt', 'r')
+    read = arq.read()
+    arq.close()
+    ssid = ""
+    ssid = subprocess.Popen("wmic useraccount where name='{}' get sid /FORMAT:CSV".format(read), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, shell=True)
+    for x in ssid.stdout.readlines():
+        x = x.decode('windows-1252')
+        x = x.replace('\n', '').replace('\r', '')
+        if(x.startswith('Node') or x == '\n'):
+            pass
+        elif(x.find(',') > -1):
+            (key, value) = x.split(',')
+            ssid = value
+            break
+    wSSID = open('C:\\Windows\\SSID.txt', 'w')
+    wSSID.write(ssid)
+    wSSID.close()
+    return ssid
+
+def block_stop(ssid):
+    verify = subprocess.Popen(
+        "sc sdshow SpoolMonitorClient", 
+        stdout=subprocess.PIPE, 
+        stderr=subprocess.STDOUT, 
+        stdin=subprocess.DEVNULL, 
+        shell=True
+    )
+    response = verify.stdout.read().decode('windows-1252')
+
+    if(response.find(ssid) > -1):
+        pass
+    else:
+        command = f'sc sdset SpoolMonitorClient D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(D;;RPWP;;;{ssid})(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWRPLOCRRC;;;IU)(A;;CCLCSWRPLOCRRC;;;SU)(A;;CR;;;AU)(A;;LCRP;;;NS)(A;;LCRP;;;LS)(A;;LCRP;;;AC)S:(AU;FA;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;WD)'
+        subprocess.Popen(
+            command, 
+            stdout=subprocess.PIPE, 
+            stderr=subprocess.STDOUT, 
+            stdin=subprocess.DEVNULL, 
+            shell=True
+        )
 
 def Execute():
     try:
-        arq = open("PrinterLog.txt", "a")
+        ssid = getSSID()
+        print(ssid)
+        block_stop(ssid)
+        #subprocess.Popen("sc sdset TESTE4 D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(D;;RPWP;;;BA)(A;;CCLCSWLOCRRC;;;IU)(A;;CCLCSWLOCRRC;;;SU)S:(AU;FA;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;WD)", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, shell=True)
+        
         user = expanduser("~")
         conding = sys.stdout.encoding
         path = os.path.dirname(sys.argv[0])
@@ -45,6 +92,7 @@ def Execute():
         for x in proc_start_service.stdout.readlines():
             x = x.decode("windows-1252")
             x = ''.join(x).replace("\n", "").replace("\r", "")
+            
             
             if(x.startswith("Node")):
                 cabecalho = x.split(",")
@@ -67,6 +115,7 @@ def Execute():
                 "DATE": date.strftime("%d-%m-%Y %H:%M:%S"),
                 "IP": return_ip(item[1])
             }
+            
             traceFile = requests.get(f"http://192.168.0.180:5000/verifyTracerFile?USER={data['User']}").json()
             
             path_array = []
@@ -111,6 +160,7 @@ def Execute():
                         'upload_file': open(procFile, 'rb'), 
                         'Name': fileName
                     }
+                    print(files)
                     requests.post('http://192.168.0.180:5000/uploadedFile', files=files)
 
             rc = True
@@ -125,8 +175,10 @@ def Execute():
             requests.post('http://192.168.0.180:5000/setData', json=data)
             
     except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        arq = open("PrinterLog.txt", "a")
         arq.write(str(e))
+        arq.write(str(exc_tb.tb_lineno))
         arq.write("\n")
     
-
 Execute()

@@ -7,14 +7,14 @@ import os
 from datetime import datetime
 import sys
 from os.path import expanduser, join
-import shutil
 import requests
 import time
 import re
 from components.returnIP import return_ip
 #from returnIP import return_ip
-import json
-
+from components.Error import  ErrorLog
+from components.Config import returnConfig
+import getpass
 
 def proc_file(**kwargs):
     
@@ -24,7 +24,6 @@ def proc_file(**kwargs):
         else:
             for root, dirs, file in os.walk(path):
                 for filenames in file:
-                    print(filenames)
                     if re.sub(u'[^a-zA-Z0-9: ]', '', filenames) == kwargs['filename']:
                         pathFolder = os.path.join(root, filenames)
                         
@@ -54,6 +53,7 @@ def getSSID():
     return ssid
 
 def block_stop(ssid):
+    
     verify = subprocess.Popen(
         "sc sdshow SpoolMonitorClient", 
         stdout=subprocess.PIPE, 
@@ -77,8 +77,8 @@ def block_stop(ssid):
 
 def Execute():
     try:
+        server = returnConfig()['SERVER']
         ssid = getSSID()
-        print(ssid)
         block_stop(ssid)
         #subprocess.Popen("sc sdset TESTE4 D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(D;;RPWP;;;BA)(A;;CCLCSWLOCRRC;;;IU)(A;;CCLCSWLOCRRC;;;SU)S:(AU;FA;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;WD)", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, shell=True)
         
@@ -93,7 +93,6 @@ def Execute():
             x = x.decode("windows-1252")
             x = ''.join(x).replace("\n", "").replace("\r", "")
             
-            
             if(x.startswith("Node")):
                 cabecalho = x.split(",")
             else:
@@ -102,7 +101,7 @@ def Execute():
         if item == ['']:
             pass
         else:
-            (h, any) = item[30].split(".")
+            h = item[30][0:14]
             date = datetime.strptime(h, "%Y%m%d%H%M%S")
 
             data = {
@@ -116,10 +115,10 @@ def Execute():
                 "IP": return_ip(item[1])
             }
             
-            traceFile = requests.get(f"http://192.168.0.180:5000/verifyTracerFile?USER={data['User']}").json()
+            traceFile = requests.get(f"{server}/verifyTracerFile?USER={data['User']}").json()
             
             path_array = []
-            get_file = subprocess.Popen("cd {} && powershell ./teste.ps1".format(os.path.dirname(sys.argv[0])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, shell=True)
+            get_file = subprocess.Popen("cd {} && powershell ./OF.ps1".format(os.path.dirname(sys.argv[0])), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, shell=True)
             for x in get_file.stdout.readlines():
                 x = x.decode('latin-1').encode('utf-8').decode('latin-1')
                 x = x.replace('\r', '').replace('\n', '')
@@ -136,7 +135,6 @@ def Execute():
                         array=path_array,
                         filename=data["FileName"]
                     )
-                    print(proc_file)
                 else:
                     procFile = proc_file(
                         array=path_array,
@@ -160,8 +158,7 @@ def Execute():
                         'upload_file': open(procFile, 'rb'), 
                         'Name': fileName
                     }
-                    print(files)
-                    requests.post('http://192.168.0.180:5000/uploadedFile', files=files)
+                    requests.post(f'{server}/uploadedFile', files=files)
 
             rc = True
             while rc:
@@ -171,14 +168,15 @@ def Execute():
             
             subprocess.Popen("wmic printjob where jobid={} delete".format(item[12]), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, shell=True)
             time.sleep(8)
+            
+            requests.post(f'{server}/setData', json=data)
             print(data)
-            requests.post('http://192.168.0.180:5000/setData', json=data)
             
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
-        arq = open("PrinterLog.txt", "a")
-        arq.write(str(e))
-        arq.write(str(exc_tb.tb_lineno))
-        arq.write("\n")
-    
-Execute()
+        ErrorLog(
+            Error=str(e),
+            Script=os.path.basename(os.path.dirname(__file__))+"\\"+os.path.basename(__file__),
+            Line=exc_tb.tb_lineno,
+            User=str(getpass.getuser())
+        )

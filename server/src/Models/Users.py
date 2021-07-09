@@ -1,3 +1,7 @@
+"""
+DESCRIÇÃO: FONTE RESPONSÁVEL PELO RETORNO DE DADOS DE USUARIOS E CADASTROS 
+"""
+
 from Models.SQL_Server import SQL_Server
 
 class InsertUser():

@@ -1,8 +1,8 @@
 {
     "Database": "CDA",
-    "Server": "192.168.0.101",
+    "Server": "192.168.0.102",
     "DBUser": "sa",
-    "DBPassword": "$2@cda101",
+    "DBPassword": "$2@cda1",
     "Network_Folder": true,
     "Credentials": {
         "User": "Protheus",
@@ -13,8 +13,8 @@
         "To": ["william.rodrigues@casadoalemao.com.br", "alexandre.delgado@casadoalemao.com.br"],
         "From": {
             "Username": "relatorioscda@gmail.com",
-            "Password": "relatorioscda@gmail.com",
-            "Email": "$2@cda123"
+            "Password": "$2@cda123",
+            "Email": "relatorioscda@gmail.com"
         }
     }
 }

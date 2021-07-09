@@ -1,43 +1,56 @@
+"""
+DESCRIÇÃO: IRÁ GERAR E ENVIAR O LOG DE ERRO E FINALIZARÁ A EXECUÇÃO DA API
+_____________________________________________________________________________
+AUTOR: WILLIAM RODRIGUES
+_____________________________________________________________________________
+DATA: 08/07/2021
+"""
+
+
 import smtplib
 from email.mime.text import MIMEText
 from datetime import date, datetime
 import requests, sys
+from Models import return_config
 
-def send_email(texto):
-# conexão com os servidores do google
+def send_email(texto, assunto):
+    """
+    ENVIARÁ O TEXTO DE LOG PARA OS EMAILS CADASTRADOS NO config.json
+    param:  texto -> TEXTO DE LOG A SER ENVIADO
+    """
+    emailConfig = return_config()['EMAIL_CONFIG']
     smtp_ssl_host = 'smtp.gmail.com'
     smtp_ssl_port = 465
-    # username ou email para logar no servidor
-    username = 'relatorioscda@gmail.com'
-    password = '$2@cda123'
 
-    from_addr = 'relatorioscda@gmail.com'
-    to_addrs = ['william.rodrigues@casadoalemao.com.br', 'alexandre.delgado@casadoalemao.com.br']
+    username = emailConfig['From']['Username']
+    password = emailConfig['From']['Password']
 
-    # a biblioteca email possuí vários templates
-    # para diferentes formatos de mensagem
-    # neste caso usaremos MIMEText para enviar
-    # somente texto
+    from_addr = emailConfig['From']['Email']
+    to_addrs = emailConfig['To']
+
+    
     message = MIMEText(texto)
-    message['subject'] = "XML's Download Log"
+    message['subject'] = assunto
     message['from'] = from_addr
     message['to'] = ', '.join(to_addrs)
 
-    # conectaremos de forma segura usando SSL
     server = smtplib.SMTP_SSL(smtp_ssl_host, smtp_ssl_port)
-    # para interagir com um servidor externo precisaremos
-    # fazer login nele
+   
     server.login(username, password)
     server.sendmail(from_addr, to_addrs, message.as_string())
     server.quit()
 
 def ErrorLog(**kwargs):
+    """
+    Gerará o texto de log e tombará a execução da API
+    params: **kwargs -> dicionario de dados
+    """
     data_atual = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     text = f"[{data_atual}]\n"
     for keys, values in kwargs.items():
         text += f"{keys}: {values}\n"
     
-    print(text)
+    send_email(text, "Spool Monitor API")
     try:
         requests.get('http://localhost:5000/quit')
     except requests.exceptions.ConnectionError:

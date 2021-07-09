@@ -1,3 +1,17 @@
+"""
+DESCRIÇÃO:  FONTE RESPONSÁVEL PELA LEITURA DO ARQUIVO DE CONFIGURAÇÃO
+            E REALIZAR A CONFIGURAÇÃO INICIAL DA API 
+______________________________________________________________________
+
+AUTOR: WILLIAM RODRIGUES
+
+______________________________________________________________________
+
+DATA: 08/07/2021
+
+"""
+
+
 from flask import Flask
 from Models import return_config
 import subprocess

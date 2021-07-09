@@ -1,3 +1,18 @@
+"""
+DESCRIÇÃO:  FONTE RESPONSÁVEL POR ATUALIZAR OS CONTADORES DAS IMPRESSORAS E 
+            DADOS DA IMPRESSÃO POR USUARIO
+_____________________________________________________________________________
+AUTOR: WILLIAM RODRIGUES
+_____________________________________________________________________________
+DATA: 08/07/2021
+
+"""
+
+
+
+
+
+
 from Models import PrinterDataSQL
 from .counter import PrinterCounter
 from Models import PageUser
@@ -24,6 +39,11 @@ class PrinterData():
         
 
     def get_db_data(self, printer, data):
+        """
+        Irá armazenar as contagens e os dados da impressora no banco de dados
+        Params: printer -> Nome padrão do driver da impressora
+                data -> json com os dados enviados pelo client.
+        """
         try:
             db_data = self.data.get_counter(printer, data['IP'])
             self.counter = PrinterCounter(data['IP'])
@@ -40,6 +60,8 @@ class PrinterData():
                 filePath = self.upload_folder+"\\"+data['originalFilename']
             
             if(int(self.printCounter) != int(db_data[0].PRINT)):
+                """Irá atualizar os dados da impressão por usuario"""
+
                 self.page.set_user_data(
                     UserID=self.user,
                     PrinterID=db_data[0].ID,
@@ -54,6 +76,11 @@ class PrinterData():
             generate_error(e)
 
     def update_printers(self, db):
+        """
+        Irá atualizar os dados gerais da Impressora no banco de dados!
+        params: db -> dados da impressora obtidos do banco de dados
+        """
+
         try:
             db_data = db
             if(int(self.printCounter) == int(db_data[0].PRINT)) and (
@@ -80,11 +107,4 @@ class PrinterData():
         except Exception as e:
             generate_error(e)
         
-        # for x in db_data:
-        #     self.counter = PrinterCounter(data['IP'])
-        #     self.newCounter = int(self.counter.getCounter())
-        #     self.oldcounter = int(x.COUNTER)
-            
-        #     self.data.updateCounter(x.ID, self.newCounter)
-        
-        #     break
+    

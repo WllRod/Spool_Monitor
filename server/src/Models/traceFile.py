@@ -15,5 +15,7 @@ def returnTraceFile(user):
     response = sql.get_data(query)
     if(response[0].Tracer == 1):
         return True
+    elif(len(response) == 0):
+        return False
     else:
         return False

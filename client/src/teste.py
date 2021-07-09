@@ -1,5 +1,2 @@
-import os
-
-import getpass
-
-print(getpass.getuser())
+teste = "20210709150558.009000-180"
+print(teste[0:14])

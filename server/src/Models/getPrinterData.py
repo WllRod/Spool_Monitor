@@ -21,7 +21,7 @@ class PrinterDataSQL():
         WHERE P.PrinterDesc='{printer}' AND P.PrinterIP='{ip}'
 
         """
-        print(query)
+        
         return self.db.get_data(query)
 
     def updateCounter(self, **kwargs):

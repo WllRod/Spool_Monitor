@@ -4,7 +4,7 @@ from .config import return_config
 class SQL_Server:
     def __init__(self):
         config = return_config()
-        print(config)
+        
         self.cnxn = pyodbc.connect(
             'Driver={SQL Server};'
             'Server=%s;'

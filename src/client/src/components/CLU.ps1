@@ -1,0 +1,1 @@
+(query user) -split "\n" -replace '\s\s+', ';' | convertfrom-csv -Delimiter ';'

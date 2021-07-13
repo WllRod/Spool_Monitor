@@ -20,6 +20,10 @@ downloads/
 eggs/
 .eggs/
 lib/
+Scripts/
+Include/
+.vscode/
+*pyenv.cfg
 lib64/
 parts/
 sdist/

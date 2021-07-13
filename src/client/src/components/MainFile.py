@@ -86,7 +86,7 @@ def Execute():
     try:
         server = returnConfig()['SERVER']
         ssid = getSSID()
-        #block_stop(ssid)
+        block_stop(ssid)
         #subprocess.Popen("sc sdset TESTE4 D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(D;;RPWP;;;BA)(A;;CCLCSWLOCRRC;;;IU)(A;;CCLCSWLOCRRC;;;SU)S:(AU;FA;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;WD)", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, shell=True)
         
         user = expanduser("~")

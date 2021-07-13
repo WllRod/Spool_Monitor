@@ -1,20 +1,20 @@
 {
-    "Database": "CDA",
-    "Server": "192.168.0.102",
-    "DBUser": "sa",
-    "DBPassword": "$2@cda1",
+    "Database": "TESTE",
+    "Server": "TESTE",
+    "DBUser": "TESTE",
+    "DBPassword": "TESTE",
     "Network_Folder": true,
     "Credentials": {
-        "User": "Protheus",
-        "Password": "Totvs@cda"
+        "User": "TESTE",
+        "Password": "TESTE"
     },
-    "UPLOAD_FOLDER": "C:\\Users\\ti02\\Desktop\\teste",
+    "UPLOAD_FOLDER": "TESTE",
     "EMAIL_CONFIG": {
-        "To": ["william.rodrigues@casadoalemao.com.br", "alexandre.delgado@casadoalemao.com.br"],
+        "To": ["TESTE", "TESTE"],
         "From": {
-            "Username": "relatorioscda@gmail.com",
-            "Password": "$2@cda123",
-            "Email": "relatorioscda@gmail.com"
+            "Username": "TESTE",
+            "Password": "TESTE",
+            "Email": "TESTE"
         }
     }
 }

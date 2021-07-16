@@ -108,7 +108,7 @@ def Execute():
                 "FileName": re.sub(u'[^a-zA-Z0-9: ]', '', item[7]),
                 "originalFilename": item[7],
                 "FilePath": "NULL",
-                "Pages": int(item[31]),
+                
                 "DATE": date.strftime("%Y%m%d %H:%M"),
                 "IP": return_ip(item[1])
             }

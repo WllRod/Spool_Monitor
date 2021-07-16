@@ -26,7 +26,7 @@ import servicemanager
 import logging
 import logging.handlers
 import requests
-
+from waitress import serve
 class SpoolAPI(win32serviceutil.ServiceFramework):
     _svc_name_ = "SpoolMonitorAPI"
     _svc_display_name_ = "Spool Monitor API"
@@ -59,7 +59,7 @@ class SpoolAPI(win32serviceutil.ServiceFramework):
         
 
         from API import app
-        app.run(host='0.0.0.0') #API ficará escutando em modo global
+        serve(app, host='0.0.0.0', port=5000) #API ficará escutando em modo global
         
 
 

@@ -12,6 +12,7 @@ from email.mime.text import MIMEText
 from datetime import date, datetime
 import requests, sys
 from Models import return_config
+from Log import write_log
 
 def send_email(texto, assunto):
     """
@@ -45,15 +46,17 @@ def ErrorLog(**kwargs):
     Gerará o texto de log e tombará a execução da API
     params: **kwargs -> dicionario de dados
     """
-    data_atual = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-    text = f"[{data_atual}]\n"
+    Logger      = write_log()
+    data_atual  = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    text        = f"[{data_atual}]\n"
     for keys, values in kwargs.items():
-        text += f"{keys}: {values}\n"
+        text    += f"{keys}: {values}\n"
     
+    Logger.info(text)
     send_email(text, "Spool Monitor API")
-    try:
-        requests.get('http://localhost:5000/quit')
-    except requests.exceptions.ConnectionError:
-        sys.exit(0)
+    # try:
+    #     requests.get('http://localhost:5000/quit')
+    # except requests.exceptions.ConnectionError:
+    #     sys.exit(0)
     #sys.exit(0)
     #

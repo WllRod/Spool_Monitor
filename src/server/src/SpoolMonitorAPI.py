@@ -14,7 +14,7 @@ ________________________________________________________________
 DATA: 08/07/2021
 """
 
-from os.path import expanduser
+import os, sys
 import socket
 import sys
 import win32event
@@ -23,7 +23,8 @@ import win32serviceutil
 from collections import namedtuple
 from shutil import copy
 import servicemanager
-from API import app
+import logging
+import logging.handlers
 import requests
 
 class SpoolAPI(win32serviceutil.ServiceFramework):
@@ -54,7 +55,10 @@ class SpoolAPI(win32serviceutil.ServiceFramework):
         """
         rc = None
         
-           
+        os.environ['LOCAL_PATH'] = os.path.dirname(sys.argv[0])
+        
+
+        from API import app
         app.run(host='0.0.0.0') #API ficará escutando em modo global
         
 

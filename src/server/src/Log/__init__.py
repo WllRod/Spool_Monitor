@@ -1,0 +1,1 @@
+from .WriteLog import write_log

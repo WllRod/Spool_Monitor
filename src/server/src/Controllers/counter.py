@@ -7,16 +7,13 @@ ____________________________________________________________________
 
 DATA: 08/07/2021
 
-
 """
-
-
-
 
 import subprocess
 import time
 import os, sys
 from Error import ErrorLog
+from Models import return_oid
 
 def generate_error(error):
     exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -28,14 +25,15 @@ def generate_error(error):
         Line=exc_tb.tb_lineno
     )
 
-def verifyPrinterData(ip, oid):
+def verifyPrinterData(ip, key):
     """
     Função responsável por executar o comando de leitura das impressoras via Terminal.
     Params: IP -> IP da Impressora
             OID -> Identificador de Objeto
-
     """
-    startCommand = f"SnmpGet.exe -r:{ip} -t:10 -o:{oid}" #Programa que fazem as leituras
+    OIDFiles    = return_oid()
+    oid         = OIDFiles[ip][key]     
+    startCommand= f"SnmpGet.exe -r:{ip} -t:10 -o:{oid}" #Programa que fazem as leituras
     execute = subprocess.Popen(
         startCommand, 
         stdout=subprocess.PIPE, 
@@ -43,8 +41,7 @@ def verifyPrinterData(ip, oid):
         stdin=subprocess.DEVNULL
     )
 
-    value = return_value(execute.stdout.readlines())
-    return value
+    return return_value(execute.stdout.readlines())
 
 def return_value(lines):
 
@@ -60,6 +57,7 @@ def return_value(lines):
                 (key, value) = lines.split("=")
                 values = int(value)
                 break
+        
         return values
     except Exception as e:
         generate_error(e)
@@ -78,7 +76,7 @@ class PrinterCounter():
         Extrai a leitura total das impressões
         """
         try:
-            self.printCounter = verifyPrinterData(self.IP, "1.3.6.1.4.1.2435.2.3.9.4.2.1.5.5.52.21.1.3.1")
+            self.printCounter = verifyPrinterData(self.IP, "Print")
             return self.printCounter
         except Exception as e:
             generate_error(e)
@@ -88,7 +86,7 @@ class PrinterCounter():
         Extrai a leitura total das cópias
         """
         try:
-            self.copyCounter = verifyPrinterData(self.IP, "1.3.6.1.4.1.2435.2.3.9.4.2.1.5.5.52.21.1.3.2")
+            self.copyCounter = verifyPrinterData(self.IP, "Copy")
             return self.copyCounter
         except Exception as e:
             generate_error(e)
@@ -98,7 +96,7 @@ class PrinterCounter():
         Extrai a leitura total de outros tipos de usagem da impressora
         """
         try:
-            self.otherCounter = verifyPrinterData(self.IP, "1.3.6.1.4.1.2435.2.3.9.4.2.1.5.5.52.21.1.3.4")
+            self.otherCounter = verifyPrinterData(self.IP, "Others")
             return self.otherCounter
         except Exception as e:
             generate_error(e)
@@ -108,7 +106,7 @@ class PrinterCounter():
         Extrai a leitura total de documentos escaneados
         """
         try:
-            self.scannerCounter = verifyPrinterData(self.IP, "1.3.6.1.4.1.2435.2.3.9.4.2.1.5.5.54.2.2.1.3.4")
+            self.scannerCounter = verifyPrinterData(self.IP, "Scanner")
             return self.scannerCounter
         except Exception as e:
             generate_error(e)
@@ -118,7 +116,7 @@ class PrinterCounter():
         Extrai a leitura total de nums de impressões + num de cópias + num de outros
         """
         try:
-            self.totalCounter = verifyPrinterData(self.IP, "1.3.6.1.2.1.43.10.2.1.4.1.1")
+            self.totalCounter = verifyPrinterData(self.IP, "Total")
             return self.totalCounter
         except Exception as e:
             generate_error(e)

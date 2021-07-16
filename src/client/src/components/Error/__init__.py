@@ -1,1 +1,1 @@
-from .HandleError import send_email, ErrorLog
+from .HandleError import ErrorLog

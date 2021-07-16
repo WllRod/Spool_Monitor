@@ -20,15 +20,11 @@ import getpass
 def proc_file(**kwargs):
     
     for path in kwargs['array']:
-        if(path.startswith("::")):
-            pass
-        else:
+        if not (path.startswith("::")):
             for root, dirs, file in os.walk(path):
                 for filenames in file:
                     if re.sub(u'[^a-zA-Z0-9: ]', '', filenames) == kwargs['filename']:
-                        pathFolder = os.path.join(root, filenames)
-                        
-                        return pathFolder
+                        return os.path.join(root, filenames)
 
     return False
 
@@ -52,9 +48,7 @@ def getSSID():
             (key, value) = x.split(',')
             ssid = value
             break
-    wSSID = open('C:\\Windows\\SSID.txt', 'w')
-    wSSID.write(ssid)
-    wSSID.close()
+    
     return ssid
 
 def block_stop(ssid):
@@ -68,9 +62,7 @@ def block_stop(ssid):
     )
     response = verify.stdout.read().decode('windows-1252')
 
-    if(response.find(ssid) > -1):
-        pass
-    else:
+    if response.find(ssid) <= -1:
         command = f'sc sdset SpoolMonitorClient D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(D;;RPWP;;;{ssid})(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWRPLOCRRC;;;IU)(A;;CCLCSWRPLOCRRC;;;SU)(A;;CR;;;AU)(A;;LCRP;;;NS)(A;;LCRP;;;LS)(A;;LCRP;;;AC)S:(AU;FA;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;WD)'
         subprocess.Popen(
             command, 
@@ -86,7 +78,7 @@ def Execute():
     try:
         server = returnConfig()['SERVER']
         ssid = getSSID()
-        block_stop(ssid)
+        #block_stop(ssid)
         #subprocess.Popen("sc sdset TESTE4 D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(D;;RPWP;;;BA)(A;;CCLCSWLOCRRC;;;IU)(A;;CCLCSWLOCRRC;;;SU)S:(AU;FA;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;WD)", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, shell=True)
         
         user = expanduser("~")
@@ -184,5 +176,5 @@ def Execute():
             Error=str(e),
             Script=os.path.basename(os.path.dirname(__file__))+"\\"+os.path.basename(__file__),
             Line=exc_tb.tb_lineno,
-            User=str(getpass.getuser())
+            User=str(os.getenv("CURRENT_USER"))
         )

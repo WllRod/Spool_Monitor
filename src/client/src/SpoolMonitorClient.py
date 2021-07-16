@@ -6,7 +6,7 @@ import sys, os, site
 script_dir = "C:\\Users\\TI2\\Desktop\\Controle de impressão"
 site_packages = os.path.join(script_dir, 'Lib\\site-packages')
 try:
-    if not site_packages in sys.path:
+    if site_packages not in sys.path:
         site.addsitedir(site_packages)
 except Exception:
     pass

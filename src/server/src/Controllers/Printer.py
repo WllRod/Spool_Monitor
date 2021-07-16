@@ -59,7 +59,9 @@ class PrinterData():
             else:
                 filePath = self.upload_folder+"\\"+data['originalFilename']
             
-            if(int(self.printCounter) != int(db_data[0].PRINT)):
+            if(len(db_data) == 0 or self.printCounter is None):
+                pass
+            elif(int(self.printCounter) != int(db_data[0].PRINT)):
                 """Irá atualizar os dados da impressão por usuario"""
 
                 self.page.set_user_data(
@@ -83,27 +85,29 @@ class PrinterData():
 
         try:
             db_data = db
-            if(int(self.printCounter) == int(db_data[0].PRINT)) and (
-                int(self.copyCounter) == int(db_data[0].COPY)
-            ) and (
-                int(self.scannerCount) == int(db_data[0].SCANNER)
-            ) and (
-                int(self.othersCount) == int(db_data[0].OTHERS)
-            ) and (
-                int(self.total) == int(db_data[0].TOTAL)
-            ):
-                pass
-            
+            if(len(db_data) != 0 and self.printCounter is not None):
                 
-            else:
-                self.data.updateCounter(
-                    TotalPrint=int(self.printCounter),
-                    TotalCopy=int(self.copyCounter),
-                    TotalScanner=int(self.scannerCount),
-                    TotalOthers=int(self.othersCount),
-                    Total=int(self.total),
-                    ID=db_data[0].ID
-                )
+                if(int(self.printCounter) == int(db_data[0].PRINT)) and (
+                    int(self.copyCounter) == int(db_data[0].COPY)
+                ) and (
+                    int(self.scannerCount) == int(db_data[0].SCANNER)
+                ) and (
+                    int(self.othersCount) == int(db_data[0].OTHERS)
+                ) and (
+                    int(self.total) == int(db_data[0].TOTAL)
+                ):
+                    pass
+                
+                    
+                else:
+                    self.data.updateCounter(
+                        TotalPrint=int(self.printCounter),
+                        TotalCopy=int(self.copyCounter),
+                        TotalScanner=int(self.scannerCount),
+                        TotalOthers=int(self.othersCount),
+                        Total=int(self.total),
+                        ID=db_data[0].ID
+                    )
         except Exception as e:
             generate_error(e)
         

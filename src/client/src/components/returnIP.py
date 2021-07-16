@@ -8,7 +8,7 @@ def return_ip(printer):
     try:
         array = []
         data = {
-            
+
         }
         cabec = []
         item = []
@@ -17,15 +17,15 @@ def return_ip(printer):
             lines = lines.decode('windows-1252')
             lines = ''.join(lines).replace('\n', '').replace('\r', '')
             try:
-                
+
                 (key, value) = lines.split("=")
-                
+
                 if key not in data.keys():
                     data[key] = []
-                
-            
+
+
                 data[key].append(value)
-                
+
             except Exception:
                 pass
 
@@ -33,7 +33,7 @@ def return_ip(printer):
         for x in data['DeviceID']:
             if(x == printer):
                 break
-            cont = cont + 1
+            cont += 1
 
         ip = ""
         if(data['PortName'][cont].find("192.168.0") > -1):
@@ -54,7 +54,7 @@ def return_ip(printer):
             Error=str(e),
             Script=os.path.basename(os.path.dirname(__file__))+"\\"+os.path.basename(__file__),
             Line=exc_tb.tb_lineno,
-            User=str(getpass.getuser())
+            User=str(os.getenv("CURRENT_USER"))
         )
 
 # cont = 0
